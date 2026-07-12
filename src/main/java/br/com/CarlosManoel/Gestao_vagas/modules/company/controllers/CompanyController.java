@@ -1,6 +1,5 @@
 package br.com.CarlosManoel.Gestao_vagas.modules.company.controllers;
 
-import br.com.CarlosManoel.Gestao_vagas.modules.candidate.CandidateEntity;
 import br.com.CarlosManoel.Gestao_vagas.modules.company.entities.CompanyEntity;
 import br.com.CarlosManoel.Gestao_vagas.modules.company.useCases.CreateCompanyUseCase;
 import jakarta.validation.Valid;
@@ -20,10 +19,11 @@ public class CompanyController {
 
     @PostMapping("/")
     public ResponseEntity<Object> create(@Valid @RequestBody CompanyEntity companyEntity) {
+
         try {
             var result = this.createCompanyUseCase.execute(companyEntity);
             return ResponseEntity.ok().body(result);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
