@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,7 +29,8 @@ public class CandidateEntity {
     @Email( message = "O email deve ser válido")
     private String email;
 
-    @Length(min = 8, max = 50, message = "Senha deve Ser maior que 8 caracteres")
+    @NotBlank
+    @Length(min = 8, max =100, message = "Senha deve Ser maior que 8 caracteres")
     private String password;
     private String description;
     private String curriculum;
