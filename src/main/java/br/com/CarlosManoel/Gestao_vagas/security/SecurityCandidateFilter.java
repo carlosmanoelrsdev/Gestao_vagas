@@ -1,7 +1,6 @@
 package br.com.CarlosManoel.Gestao_vagas.security;
 
 import br.com.CarlosManoel.Gestao_vagas.providers.JWTCandidateProvider;
-import com.auth0.jwt.JWT;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class CreateJobDTO {
 
-    private String Description;
+    private String description;
     private String benefits;
     private String level;
 }
