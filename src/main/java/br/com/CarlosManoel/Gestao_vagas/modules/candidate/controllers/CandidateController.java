@@ -3,14 +3,24 @@ package br.com.CarlosManoel.Gestao_vagas.modules.candidate.controllers;
 
 import br.com.CarlosManoel.Gestao_vagas.modules.candidate.entities.CandidateEntity;
 import br.com.CarlosManoel.Gestao_vagas.modules.candidate.useCases.CreateCandidateUseCase;
+import br.com.CarlosManoel.Gestao_vagas.modules.candidate.useCases.ListAllJobsFilterUseCase;
+import br.com.CarlosManoel.Gestao_vagas.modules.company.entities.JobEntity;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/candidate")
@@ -20,7 +30,18 @@ public class CandidateController {
     @Autowired
     private CreateCandidateUseCase createCandidateUseCase;
 
+    @Autowired
+    private ListAllJobsFilterUseCase listAllJobsFilterUseCase;
+
     @PostMapping("/")
+    @Tag(name = "Candidato", description = "informações do candidato")
+    @Operation(summary = "Criação de Candidatos",
+            description = "Função responsável por criar as informacoes do perfil do candidato")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(schema = @Schema(implementation = CandidateEntity.class))
+            })
+    })
     public ResponseEntity<Object> create(@Valid @RequestBody CandidateEntity candidateEntity) {
         try {
             var result = this.createCandidateUseCase.execute(candidateEntity);
@@ -28,5 +49,21 @@ public class CandidateController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/job")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    @Tag(name = "Vagas", description = "Informações das vagas")
+    @Operation(summary = "Listagem de vagas disponíveis", description = "lista de vagas")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(
+                            array = @ArraySchema(schema = @Schema(implementation = JobEntity.class)
+                    ))
+            })
+    })
+    @SecurityRequirement(name = "jwt_auth")
+    public List<JobEntity> findJobByFilter(@RequestParam String filter) {
+        return this.listAllJobsFilterUseCase.execute(filter);
     }
 }
