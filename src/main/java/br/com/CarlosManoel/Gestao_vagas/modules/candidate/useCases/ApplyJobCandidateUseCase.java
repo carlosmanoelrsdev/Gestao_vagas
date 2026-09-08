@@ -14,26 +14,33 @@ import java.util.UUID;
 @Service
 public class ApplyJobCandidateUseCase {
 
-    @Autowired
-    private ApplyJobRepository applyJobRepository;
+    private final ApplyJobRepository applyJobRepository;
+    private final CandidateRepository candidateRepository;
+    private final JobRepository jobRepository;
 
-    @Autowired
-    private CandidateRepository candidateRepository;
-    private JobRepository jobRepository;
+    public ApplyJobCandidateUseCase(
+            ApplyJobRepository applyJobRepository,
+            CandidateRepository candidateRepository,
+            JobRepository jobRepository
+    ) {
+        this.applyJobRepository = applyJobRepository;
+        this.candidateRepository = candidateRepository;
+        this.jobRepository = jobRepository;
+    }
 
     public ApplyJobEntity execute(UUID idCandidate, UUID idJob) {
 
         this.candidateRepository.findById(idCandidate)
                 .orElseThrow(() -> new UserNotFoundException());
 
-        this.candidateRepository.findById(idCandidate).orElseThrow(() ->
-                new UserNotFoundException());
+        this.jobRepository.findById(idJob)
+                .orElseThrow(() -> new JobNotFoundException());
 
-        var applyJob = ApplyJobEntity.builder().candidateId(idCandidate)
-                .jobId(idJob).build();
+        var applyJob = ApplyJobEntity.builder()
+                .candidateId(idCandidate)
+                .jobId(idJob)
+                .build();
 
-        applyJob = applyJobRepository.save(applyJob);
-        return applyJob;
+        return this.applyJobRepository.save(applyJob);
     }
-
 }
